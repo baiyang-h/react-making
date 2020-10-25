@@ -1,6 +1,6 @@
 /**
  *
- * @param type          元素类型
+ * @param type          元素类型  可能是一个字符串（原生标签），也可能是一个组件（函数）
  * @param config        配置对象，一般来说就是属性对象
  * @param children      第一个儿子
  */

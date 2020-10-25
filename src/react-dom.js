@@ -4,7 +4,7 @@
  * @param container     插入到哪个容器里
  */
 function render(vdom, container) {
-    const dom = createDOM(vdom)   // 将虚拟dom转换成真是dom
+    const dom = createDOM(vdom)   // 将虚拟dom转换成真实dom
     container.appendChild(dom)
 }
 
@@ -22,7 +22,12 @@ function createDOM(vdom) {
     }
     // 否则就是一个React 元素
     let { type, props } = vdom
-    let dom = document.createElement(type)
+    let dom;
+    if(typeof type === 'function') {    // 如果是一个函数组件的话
+        return updateFunctionComponent(vdom);
+    } else {   // 如果是一个原生的元素
+        dom = document.createElement(type)
+    }
 
     updateProps(dom, props);    // 更新属性， 把虚拟dom上的属性设置到真是dom上
     // 处理子节点，如果子节点就是一个单节点，并且是字符串或者数字的话，直接赋值
@@ -37,6 +42,18 @@ function createDOM(vdom) {
         dom.textContent = props.children ? props.children.toString() : ''
     }
     return dom
+}
+
+/**
+ * 函数组件转为真实DOM
+ * @param vdom    组件的虚拟DOM React元素
+ * vdom 是这个函数组件本身  {type: Welcome, props: {name: 'aaa'}}     我们需要的是这个函数组件返回的值得 虚拟dom
+ * renderVdom  {type: 'h1', props: { children: 'hello, aaa' }}
+ */
+function updateFunctionComponent(vdom) {
+    let { type, props } = vdom
+    let renderVdom = type(props)    // 可能是一个原生虚拟dom， 也可能还是一个函数组件虚拟dom
+    return createDOM(renderVdom)
 }
 
 /**
