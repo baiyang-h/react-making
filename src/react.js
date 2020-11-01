@@ -1,3 +1,5 @@
+import Component from './Component'
+
 /**
  *
  * @param type          元素类型  可能是一个字符串（原生标签），也可能是一个组件（函数）
@@ -17,14 +19,15 @@ function createElement(type, config, children) {
     }
     // children 可能是数组（多于1个儿子），也可能是一个字符串或者数字，也可能是一个null，也可能是一个 react 元素
     props.children = children
-    return {
-        type,
+    return {   // React 元素，也就是 虚拟 dom、type 是元素类型 props元素的属性 vdom
+        type, 
         props
     }
 }
 
 let React = {
-    createElement
+    createElement,
+    Component
 }
 
 export default React

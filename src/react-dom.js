@@ -23,8 +23,15 @@ function createDOM(vdom) {
     // 否则就是一个React 元素
     let { type, props } = vdom
     let dom;
+    // 如归是一个组件的话，还要区分到底是类组价还是函数组件,,  不过类和函数 的 typeof 都是 function
     if(typeof type === 'function') {    // 如果是一个函数组件的话
-        return updateFunctionComponent(vdom);
+
+        if(type.isReactComponent) {  // 表示为类组件的虚拟DOM 元素
+            return updateClassComponent(vdom);
+        } else {
+            return updateFunctionComponent(vdom);
+        }
+
     } else {   // 如果是一个原生的元素
         dom = document.createElement(type)
     }
@@ -41,6 +48,20 @@ function createDOM(vdom) {
     } else {  // 如果出现了其他的意外情况    null就是空串
         dom.textContent = props.children ? props.children.toString() : ''
     }
+    return dom
+}
+
+/**
+ * 类组件转为真实DOM
+ * 1. 创建类组件的实例
+ * @param vdom    组件的虚拟DOM React元素
+ */
+function updateClassComponent(vdom) {
+    let { type, props } = vdom
+    let classInstance = new type(props)     // new Welcome({name: 'zhufeng'})
+    let renderVdom = classInstance.render()    // <h1>hello, {this.props.name}</h1>  -> <h1>hello, aaa</h1>
+    const dom = createDOM(renderVdom)
+    // classInstance.dom = dom         // 让类组件实例上挂一个dom， 指向类组件的实例的真事DOM，这里暂时还用不到
     return dom
 }
 
@@ -96,7 +117,7 @@ export default ReactDOM
 
 /*
 ReactDOM.render(
-  <App />,
-  document.getElementById('root')
+    <App />,
+    document.getElementById('root')
 );
  */
