@@ -28,7 +28,7 @@ function createDOM(vdom) {
 
         if(type.isReactComponent) {  // 表示为类组件的虚拟DOM 元素
             return updateClassComponent(vdom);
-        } else {
+        } else {            // 函数组件
             return updateFunctionComponent(vdom);
         }
 
