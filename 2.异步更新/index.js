@@ -18,35 +18,17 @@ class Counter extends React.Component {
         this.setState({
             number: this.state.number+1
         })
-        console.log(this.state.number)   //0
+        console.log(this.state.number)
 
         this.setState({
             number: this.state.number+1
         })
-        console.log(this.state.number)  //0
+        console.log(this.state.number)
 
-        setTimeout(() => {
-            console.log(this.state.number)  // 1
-
-            this.setState({
-                number: this.state.number+1
-            })
-            console.log(this.state.number) // 2
-
-            this.setState({
-                number: this.state.number+1
-            })
-            console.log(this.state.number)  // 3
-        })
-
-    }
-
-    handleClick2 = () => {
-        console.log('冒泡触发了嘛')
     }
 
     render() {
-        return <div onClick={this.handleClick2}>
+        return <div>
             <button onClick={this.handleClick}>+</button>
             <div>number: {this.state.number}</div>
         </div>

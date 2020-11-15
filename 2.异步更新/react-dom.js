@@ -1,5 +1,3 @@
-import { addEvent } from './event'
-
 /**
  * 虚拟DOM转换成真是DOM，并插入到容器里
  * @param vdom          虚拟dom
@@ -102,9 +100,7 @@ function updateProps(dom, props) {
                 dom.style[key] = styleObject[key]    // dom.style.color = 'red'
             }
         } else if(key.startsWith('on')) {   // 事件
-            // dom[key.toLocaleLowerCase()] = props[key]    // 对 真实dom 绑定事件函数    dom.onclick=onClick函数
-            // 第一个参数是 dom， 第二个参数是原生事件名，第三个参数是是事件函数
-            addEvent(dom, key.toLocaleLowerCase(), props[key])
+            dom[key.toLocaleLowerCase()] = props[key]    // 对 真实dom 绑定事件函数    dom.onclick=onClick函数
         } else {
             dom[key] = props[key]    // dom.className = 'title'
         }
