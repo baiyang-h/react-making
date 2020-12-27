@@ -8,9 +8,12 @@ import Component from './Component'
  */
 
 function createElement(type, config, children) {
+    let ref;   //  元素是有一个 ref的
     if(config) {    // 暂时我们只写一个简略版的，所以把不用到的属性给删除掉
         delete config._owner
         delete config._store
+        ref = config.ref
+        delete config.ref
     }
     let props = {...config}
     // 因为 children 的参数可能会有很多个 createElement(type, config, children1, children2, children3, ...)
@@ -21,13 +24,24 @@ function createElement(type, config, children) {
     props.children = children
     return {   // React 元素，也就是 虚拟 dom、type 是元素类型 props元素的属性 vdom
         type,
-        props
+        props,
+        ref,  // ref 是和 props 同级的，所以先取出来，然后删除
+    }
+}
+
+/**
+ * ref 的实现
+ */
+function createRef() {
+    return {
+        current: null
     }
 }
 
 let React = {
     createElement,
-    Component
+    Component,
+    createRef
 }
 
 export default React

@@ -23,7 +23,7 @@ export function createDOM(vdom) {
         return ''
     }
     // 否则就是一个React 元素
-    let { type, props } = vdom
+    let { type, props, ref } = vdom
     let dom;
     // 如归是一个组件的话，还要区分到底是类组价还是函数组件,,  不过类和函数 的 typeof 都是 function
     if(typeof type === 'function') {    // 如果是一个函数组件的话
@@ -50,6 +50,10 @@ export function createDOM(vdom) {
     } else {  // 如果出现了其他的意外情况    null就是空串
         dom.textContent = props.children ? props.children.toString() : ''
     }
+    if(ref) {
+        ref.current = dom
+    }
+
     return dom
 }
 

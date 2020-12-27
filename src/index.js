@@ -4,58 +4,28 @@
 import React from './react';
 import ReactDOM from './react-dom';
 
-import { updateQueue } from './Component'
-
-class Counter extends React.Component {
-
-    state = {
-        number: 0
+class Sum extends React.Component {
+    constructor(props){
+        super(props);
+        this.a = React.createRef();
+        this.b = React.createRef();
+        this.result = React.createRef();
     }
-
-    // event 是事件对象，但是它并不是DOM原生的，而是进过 React 封装的
-    handleClick = (event) => {
-
-        this.setState({
-            number: this.state.number+1
-        })
-        console.log(this.state.number)   //0
-
-        this.setState({
-            number: this.state.number+1
-        })
-        console.log(this.state.number)  //0
-
-        setTimeout(() => {
-            console.log(this.state.number)  // 1
-
-            this.setState({
-                number: this.state.number+1
-            })
-            console.log(this.state.number) // 2
-
-            this.setState({
-                number: this.state.number+1
-            })
-            console.log(this.state.number)  // 3
-        })
-
+    handleAdd = () => {
+        let a = this.a.current.value;
+        let b = this.b.current.value;
+        this.result.current.value = a+b;
     }
-
-    handleClick2 = () => {
-        console.log('冒泡触发了嘛')
-    }
-
     render() {
-        return <div onClick={this.handleClick2}>
-            <button onClick={this.handleClick}>+</button>
-            <div>number: {this.state.number}</div>
-        </div>
+        return (
+          <>
+              <input ref={this.a} />+<input ref={this.b} /><button onClick={this.handleAdd}>=</button><input ref={this.result} />
+          </>
+        );
     }
 }
 
-let element = <Counter />
-
-// console.log(<button onClick={() => {}}>123</button>)
+let element = <Sum />
 
 ReactDOM.render(
     element,
