@@ -31,6 +31,14 @@ class Updater {
     // 如果当前处于批量更新模式，也就是异步更新模式，把当前的 uodate 实例放到 updateQueue 里
     // 如果是非批量更新，也就是同步更新的话，则调用updateComponent直接更新
     // 这里 updateQueue.add(this) 应该可以优化 去重， 去重 同一个 update 实例
+
+    // 为什么要封装呢？因为以后的更新分为状态更新和属性更新，所以封装成一个函数
+    this.emitUpdate();   // 发射更新
+  }
+
+  // TODO 现在还没有实现组件的属性改变后的更新，暂时还不写这个逻辑，等会写。。 现在暂时只考虑状态更新 ， 即 false时 updateComponent
+  emitUpdate() {
+    // 判断是否是批量更新? 是的话往里面放，不是的话就直接更新
     updateQueue.isBatchingUpdate ? updateQueue.add(this) : this.updateComponent()
   }
 
@@ -39,8 +47,13 @@ class Updater {
     let { classInstance, pendingStates } = this
     if(pendingStates.length) {   // 说明有等待更新的状态
       // 组件的老状态和数组中的新状态合并后得到最后的新状态
-      classInstance.state = this.getState()
-      classInstance.forceUpdate()   // 让组件强行更新
+
+      // 注释掉这两句了换成下面 classInstance.state = this.getState()
+      // classInstance.forceUpdate()   // 让组件强行更新
+
+      // shouldUpdate 生命周期了
+      // 无论是否真正更新页面，组件的state其实已经在this.getState()的时候更新了
+      shouldUpdate(classInstance, this.getState())  // 参数是：类的实例和新的状态
     }
   }
 
@@ -58,6 +71,15 @@ class Updater {
     }
     return state
   }
+}
+
+function shouldUpdate(classInstance, nextState) {
+  classInstance.state = nextState   // 不管是否要刷新页面，状态一定会改
+  if(classInstance.shouldComponentUpdate && !classInstance.shouldComponentUpdate(classInstance.props, nextState)) {
+    return false;   // 如果提供了 shouldComponentUpdate 函数，并且它的返回值为 false，就不继续走了，更新结束了
+  }
+  // 更新
+  classInstance.forceUpdate()
 }
 
 class Component {
@@ -87,6 +109,9 @@ class Component {
 
   // 强制更新
   forceUpdate() {
+    if(this.componentWillUpdate) {  // 将更新
+      this.componentWillUpdate();
+    }
     let renderVdom = this.render()
     updateClassComponent(this, renderVdom)
   }
@@ -96,6 +121,9 @@ function updateClassComponent(classInstance, renderVdom) {
   let oldDOM = classInstance.dom
   let newDOM = createDOM(renderVdom)
   oldDOM.parentNode.replaceChild(newDOM, oldDOM)
+  if(classInstance.componentDidUpdate) {  // 更新好
+    classInstance.componentDidUpdate();
+  }
   classInstance.dom = newDOM
 }
 

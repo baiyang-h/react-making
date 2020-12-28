@@ -60,14 +60,26 @@ export function createDOM(vdom) {
 /**
  * 类组件转为真实DOM
  * 1. 创建类组件的实例
+ * 2. 调用实例的render方法得到将要渲染的React元素
+ * 3. 把 React 元素转成真实 DOM， 挂载到父节点上就可以了
  * @param vdom    组件的虚拟DOM React元素
  */
 function updateClassComponent(vdom) {
     let { type, props } = vdom
     let classInstance = new type(props)     // new Welcome({name: 'zhufeng'})
+
+    if(classInstance.componentWillMount) {
+        classInstance.componentWillMount();
+    }
+
     let renderVdom = classInstance.render()    // <h1>hello, {this.props.name}</h1>  -> <h1>hello, aaa</h1>
     const dom = createDOM(renderVdom)
     classInstance.dom = dom         // 让类组件实例上挂一个dom， 指向类组件的实例的真事DOM，setState 会用到。即将老的 dom 先做保存
+
+    if(classInstance.componentDidMount) {
+        classInstance.componentDidMount();
+    }
+
     return dom
 }
 
