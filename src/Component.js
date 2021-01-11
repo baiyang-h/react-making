@@ -1,5 +1,6 @@
 import { createDOM } from './react-dom'
 import { isFunction } from './utils'
+import { compareTwoVdom } from './react-dom'
 
 /**
  * 对象 类
@@ -112,20 +113,20 @@ class Component {
     if(this.componentWillUpdate) {  // 将更新
       this.componentWillUpdate();
     }
-    let renderVdom = this.render()
-    updateClassComponent(this, renderVdom)
+    // 现在我要开始更新其他子类组件了
+    let newVdom = this.render()   //拿到新的 虚拟 dom
+    // oldVdom 就是类的实例的render方法渲染得到的那个虚拟DOM，或者说React元素div
+    // 此例子中的 this.oldVdom.dom.parentNode 是谁？ #root
+    let currentVdom = compareTwoVdom(this.oldVdom.dom.parentNode, newVdom);   //比较新的和旧的两个 dom 树
+    // 每次更新后，最新的vdom 会成为最新的上一次的vdom，等待下一次的重新比较
+    this.oldVdom = currentVdom;
+    if(this.componentDidUpdate) {  // 将更新完成
+      this.componentDidUpdate()
+    }
   }
 }
 
-function updateClassComponent(classInstance, renderVdom) {
-  let oldDOM = classInstance.dom
-  let newDOM = createDOM(renderVdom)
-  oldDOM.parentNode.replaceChild(newDOM, oldDOM)
-  if(classInstance.componentDidUpdate) {  // 更新好
-    classInstance.componentDidUpdate();
-  }
-  classInstance.dom = newDOM
-}
+
 
 // 将新的虚拟DOM 转为 真实 DOM，并且替换掉老的虚拟 DOM
 function updateClassInstance(classInstance, renderVdom) {
