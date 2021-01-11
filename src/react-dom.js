@@ -73,7 +73,7 @@ function updateClassComponent(vdom) {
         classInstance.componentWillMount();
     }
 
-    let renderVdom = classInstance.render()    // <h1>hello, {this.props.name}</h1>  -> <h1>hello, aaa</h1>
+    let renderVdom = classInstance.render()    // <h1>hello, {this.props.name}</h1>  -> <h1>hello, aaa</h1>   的虚拟dom
     const dom = createDOM(renderVdom)   // 这里拿到真实dom
     //vdom 和 renderVdom 有什么区别？ <Counter /> vdom： 即 React.createElement(Counter) {type: Counter, ...} Counter实例。。。  renderVdom：是Counter实例的render方法返回值
     // vdom：{type: Counter, ...}     renderVdom：{type: 'div', ...}

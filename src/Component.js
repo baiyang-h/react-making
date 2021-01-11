@@ -117,7 +117,7 @@ class Component {
     let newVdom = this.render()   //拿到新的 虚拟 dom
     // oldVdom 就是类的实例的render方法渲染得到的那个虚拟DOM，或者说React元素div
     // 此例子中的 this.oldVdom.dom.parentNode 是谁？ #root
-    let currentVdom = compareTwoVdom(this.oldVdom.dom.parentNode, newVdom);   //比较新的和旧的两个 dom 树
+    let currentVdom = compareTwoVdom(this.oldVdom.dom.parentNode, this.oldVdom, newVdom);   //比较新的和旧的两个 dom 树
     // 每次更新后，最新的vdom 会成为最新的上一次的vdom，等待下一次的重新比较
     this.oldVdom = currentVdom;
     if(this.componentDidUpdate) {  // 将更新完成
